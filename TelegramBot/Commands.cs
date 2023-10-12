@@ -28,6 +28,6 @@ namespace TelegramBot
         public const string FourRoomApartmentCommand = "четыре";
         public const string CommonCleanCommand = "поддерживающая";
         public const string SuperCleanCommand = "генеральная";
-
+        public const string CallCommand = "позвоните мне";
     }
 }

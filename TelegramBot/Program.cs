@@ -11,7 +11,7 @@ namespace TelegramBot
     {
         static async Task Main(string[] args)
         {
-            int myChatID = 462294341;
+            int myChatID = 385769216;
             bool isSendToMe = false;
             string accessToken = "6093975646:AAHEGveuvJRB4fUc3O6JNn9bLPkThHiygxc";
             var botClient = new TelegramBotClient(accessToken);
@@ -35,6 +35,14 @@ namespace TelegramBot
 
             async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
             {
+                ReplyKeyboardMarkup replyKeyboardMarkup = new(new[]
+                {
+                new KeyboardButton[] { "Позвоните мне" },
+                })
+                {
+                    ResizeKeyboard = true
+                };
+
                 if (update.Message is not { } message)
                     return;
 
@@ -44,12 +52,6 @@ namespace TelegramBot
                 var chatId = message.Chat.Id;
 
                 Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
-
-                // Echo received message text
-                //Message sentMessage = await botClient.SendTextMessageAsync(
-                //    chatId: chatId,
-                //    text: "You said:\n" + messageText,
-                //    cancellationToken: cancellationToken);
 
                 var lower = message.Text.ToLower();
 
@@ -75,6 +77,7 @@ namespace TelegramBot
                 }
                 else if (lower.StartsWith(Commands.YesCommand))
                 {
+                    //isSendToMe = true;
                     Message firstAnswer = await botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: $"У вас квартира или дом?",
@@ -129,12 +132,19 @@ namespace TelegramBot
                     text: $"Мы вам очень благодарны. В ближайшее время с вами свяжется менеджер",
                     cancellationToken: cancellationToken);
                 }
+                else if (lower.StartsWith(Commands.CallCommand))
+                {
+                    Message firstAnswer = await botClient.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: $"Введите номер телефона: ",
+                    cancellationToken: cancellationToken);
+                }
                 else
                 {
                     Message sentMessage = await botClient.SendTextMessageAsync(
                     chatId: chatId,
                     text: $"Привет, {message.Chat.Username}.\nМы клиниговая компания diamond cleaning :) \n" +
-                    $"{Commands.COMMAND_LIST}? \n",
+                    $"{Commands.COMMAND_LIST}? \n", replyMarkup: replyKeyboardMarkup,
                     cancellationToken: cancellationToken);
                 }
             }
@@ -151,6 +161,7 @@ namespace TelegramBot
                 Console.WriteLine(ErrorMessage);
                 return Task.CompletedTask;
             }
+
         }
     }
 }
